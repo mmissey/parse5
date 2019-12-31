@@ -2398,7 +2398,7 @@ function tokenInTable(p, token) {
 // The "in table text" insertion mode
 //------------------------------------------------------------------
 function whitespaceCharacterInTableText(p, token) {
-    if (p.specCompliantParents) {
+    if (!p.options.preserveWhitespace) {
         p.pendingCharacterTokens.push(token);
     } else {
         insertCharacters(p, token);
@@ -2406,7 +2406,7 @@ function whitespaceCharacterInTableText(p, token) {
 }
 
 function characterInTableText(p, token) {
-    if (p.specCompliantParents) {
+    if (p.options.specCompliantParents) {
         p.pendingCharacterTokens.push(token);
         p.hasNonWhitespacePendingCharacterToken = true;
     } else {
