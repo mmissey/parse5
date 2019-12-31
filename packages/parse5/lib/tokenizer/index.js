@@ -128,6 +128,13 @@ const HEXADEMICAL_CHARACTER_REFERENCE_STATE = 'HEXADEMICAL_CHARACTER_REFERENCE_S
 const DECIMAL_CHARACTER_REFERENCE_STATE = 'DECIMAL_CHARACTER_REFERENCE_STATE';
 const NUMERIC_CHARACTER_REFERENCE_END_STATE = 'NUMERIC_CHARACTER_REFERENCE_END_STATE';
 
+const HANDLEBARS_START_STATE = 'HANDLEBARS_START_STATE';
+const HANDLEBARS_UNESCAPED_START_STATE = 'HANDLEBARS_UNESCAPED_START_STATE';
+const HANDLEBARS_OPEN_STATE = 'HANDLEBARS_OPEN_STATE';
+const HANDLEBARS_CLOSE_STATE = 'HANDLEBARS_CLOSE_STATE';
+const HANDLEBARS_END_STATE = 'HANDLEBARS_END_STATE';
+const HANDLEBARS_UNESCAPED_END_STATE = 'HANDLEBARS_UNESCAPED_END_STATE';
+
 //Utils
 
 //OPTIMIZATION: these utility functions should not be moved out of this module. V8 Crankshaft will not inline
@@ -379,7 +386,15 @@ class Tokenizer {
             data: ''
         };
     }
-
+    _createHandlebarsToken() {
+        this.currentToken = {
+            type: Tokenizer.HANDLEBARS_TOKEN,
+            data: {
+                escaped: true,
+                content: ''
+            }
+        };
+    }
     _createDoctypeToken(initialName) {
         this.currentToken = {
             type: Tokenizer.DOCTYPE_TOKEN,
@@ -589,6 +604,10 @@ class Tokenizer {
 
         if (cp === $.LESS_THAN_SIGN) {
             this.state = TAG_OPEN_STATE;
+        } else if (cp === $.LEFT_BRACE) {
+            this.state = HANDLEBARS_START_STATE;
+        } else if (cp === $.RIGHT_BRACE) {
+            this.state = HANDLEBARS_END_STATE;
         } else if (cp === $.AMPERSAND) {
             this.returnState = DATA_STATE;
             this.state = CHARACTER_REFERENCE_STATE;
@@ -738,6 +757,77 @@ class Tokenizer {
             this.currentToken.tagName += toChar(cp);
         }
     }
+    // Handlebars start state {
+    //------------------------------------------------------------------
+    [HANDLEBARS_START_STATE](cp) {
+        if (cp === $.LEFT_BRACE) {
+            // two left braces, check for 3
+            this.state = HANDLEBARS_UNESCAPED_START_STATE;
+            this._createHandlebarsToken();
+        } else {
+            //only 1 left brace, not handlebars
+            this.state = DATA_STATE;
+            this._emitCodePoint(cp);
+        }
+    }
+
+    // Handlebars unescaped start state {{
+    //------------------------------------------------------------------
+    [HANDLEBARS_UNESCAPED_START_STATE](cp) {
+        if (cp === $.LEFT_BRACE) {
+            // 3 left braces, set handlebars open
+            this.state = HANDLEBARS_OPEN_STATE;
+            this.currentToken.data.escaped = false;
+        } else {
+            // just 2 braces, set handlebars open
+            this._reconsumeInState(HANDLEBARS_OPEN_STATE);
+        }
+    }
+
+    // Handlebars open state {{ {{{
+    //------------------------------------------------------------------
+    [HANDLEBARS_OPEN_STATE](cp) {
+        if (cp === $.RIGHT_BRACE) {
+            // found right brace, check for 2
+            this.state = HANDLEBARS_CLOSE_STATE;
+        } else if (cp === $.NULL) {
+            this._err(ERR.unexpectedNullCharacter);
+            this.currentToken.tagName += unicode.REPLACEMENT_CHARACTER;
+        } else if (cp === $.EOF) {
+            this._err(ERR.eofInTag);
+            this._emitCurrentToken();
+            this._emitEOFToken();
+        } else {
+            this.currentToken.data.content += toChar(cp);
+        }
+    }
+
+    // Handlebars close state {{ {{{  }
+    //------------------------------------------------------------------
+    [HANDLEBARS_CLOSE_STATE](cp) {
+        if (cp === $.RIGHT_BRACE) {
+            // found 2 right braces, check for 3
+            this.state = HANDLEBARS_UNESCAPED_END_STATE;
+        }
+    }
+    // Handlebars end state
+    //------------------------------------------------------------------
+    [HANDLEBARS_UNESCAPED_END_STATE](cp) {
+        if (cp === $.RIGHT_BRACE) {
+            // found 3 right braces, check for 3
+            this.state = DATA_STATE;
+            this._emitCurrentToken();
+        } else {
+            this._emitCurrentToken();
+            this._reconsumeInState(DATA_STATE);
+        }
+    }
+
+    // // Handlebars end state
+    // //------------------------------------------------------------------
+    // [HANDLEBARS_END_STATE](cp) {
+
+    // }
 
     // RCDATA less-than sign state
     //------------------------------------------------------------------
@@ -2172,7 +2262,7 @@ Tokenizer.COMMENT_TOKEN = 'COMMENT_TOKEN';
 Tokenizer.DOCTYPE_TOKEN = 'DOCTYPE_TOKEN';
 Tokenizer.EOF_TOKEN = 'EOF_TOKEN';
 Tokenizer.HIBERNATION_TOKEN = 'HIBERNATION_TOKEN';
-
+Tokenizer.HANDLEBARS_TOKEN = 'HANDLEBARS_TOKEN';
 //Tokenizer initial states for different modes
 Tokenizer.MODE = {
     DATA: DATA_STATE,

@@ -91,6 +91,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: tokenInInitialMode,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: doctypeInInitialMode,
         [Tokenizer.START_TAG_TOKEN]: tokenInInitialMode,
         [Tokenizer.END_TAG_TOKEN]: tokenInInitialMode,
@@ -101,6 +102,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: tokenBeforeHtml,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagBeforeHtml,
         [Tokenizer.END_TAG_TOKEN]: endTagBeforeHtml,
@@ -111,6 +113,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: tokenBeforeHead,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: misplacedDoctype,
         [Tokenizer.START_TAG_TOKEN]: startTagBeforeHead,
         [Tokenizer.END_TAG_TOKEN]: endTagBeforeHead,
@@ -121,6 +124,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: tokenInHead,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: insertCharacters,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: misplacedDoctype,
         [Tokenizer.START_TAG_TOKEN]: startTagInHead,
         [Tokenizer.END_TAG_TOKEN]: endTagInHead,
@@ -131,6 +135,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: tokenInHeadNoScript,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: insertCharacters,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: misplacedDoctype,
         [Tokenizer.START_TAG_TOKEN]: startTagInHeadNoScript,
         [Tokenizer.END_TAG_TOKEN]: endTagInHeadNoScript,
@@ -141,6 +146,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: tokenAfterHead,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: insertCharacters,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: misplacedDoctype,
         [Tokenizer.START_TAG_TOKEN]: startTagAfterHead,
         [Tokenizer.END_TAG_TOKEN]: endTagAfterHead,
@@ -151,6 +157,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: whitespaceCharacterInBody,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagInBody,
         [Tokenizer.END_TAG_TOKEN]: endTagInBody,
@@ -161,6 +168,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: insertCharacters,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: insertCharacters,
         [Tokenizer.COMMENT_TOKEN]: ignoreToken,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: ignoreToken,
         [Tokenizer.END_TAG_TOKEN]: endTagInText,
@@ -171,6 +179,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: characterInTable,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: characterInTable,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagInTable,
         [Tokenizer.END_TAG_TOKEN]: endTagInTable,
@@ -181,6 +190,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: whitespaceCharacterInTableText,
         [Tokenizer.COMMENT_TOKEN]: tokenInTableText,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: tokenInTableText,
         [Tokenizer.START_TAG_TOKEN]: tokenInTableText,
         [Tokenizer.END_TAG_TOKEN]: tokenInTableText,
@@ -191,6 +201,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: whitespaceCharacterInBody,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagInCaption,
         [Tokenizer.END_TAG_TOKEN]: endTagInCaption,
@@ -201,6 +212,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: tokenInColumnGroup,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: insertCharacters,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagInColumnGroup,
         [Tokenizer.END_TAG_TOKEN]: endTagInColumnGroup,
@@ -211,6 +223,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: characterInTable,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: characterInTable,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagInTableBody,
         [Tokenizer.END_TAG_TOKEN]: endTagInTableBody,
@@ -221,6 +234,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: characterInTable,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: characterInTable,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagInRow,
         [Tokenizer.END_TAG_TOKEN]: endTagInRow,
@@ -231,6 +245,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: whitespaceCharacterInBody,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagInCell,
         [Tokenizer.END_TAG_TOKEN]: endTagInCell,
@@ -241,6 +256,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: insertCharacters,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagInSelect,
         [Tokenizer.END_TAG_TOKEN]: endTagInSelect,
@@ -251,6 +267,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: insertCharacters,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagInSelectInTable,
         [Tokenizer.END_TAG_TOKEN]: endTagInSelectInTable,
@@ -261,6 +278,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: whitespaceCharacterInBody,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagInTemplate,
         [Tokenizer.END_TAG_TOKEN]: endTagInTemplate,
@@ -271,6 +289,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: tokenAfterBody,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: whitespaceCharacterInBody,
         [Tokenizer.COMMENT_TOKEN]: appendCommentToRootHtmlElement,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagAfterBody,
         [Tokenizer.END_TAG_TOKEN]: endTagAfterBody,
@@ -281,6 +300,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: insertCharacters,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagInFrameset,
         [Tokenizer.END_TAG_TOKEN]: endTagInFrameset,
@@ -291,6 +311,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: insertCharacters,
         [Tokenizer.COMMENT_TOKEN]: appendComment,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagAfterFrameset,
         [Tokenizer.END_TAG_TOKEN]: endTagAfterFrameset,
@@ -301,6 +322,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: tokenAfterAfterBody,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: whitespaceCharacterInBody,
         [Tokenizer.COMMENT_TOKEN]: appendCommentToDocument,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagAfterAfterBody,
         [Tokenizer.END_TAG_TOKEN]: tokenAfterAfterBody,
@@ -311,6 +333,7 @@ const TOKEN_HANDLERS = {
         [Tokenizer.NULL_CHARACTER_TOKEN]: ignoreToken,
         [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: whitespaceCharacterInBody,
         [Tokenizer.COMMENT_TOKEN]: appendCommentToDocument,
+        [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
         [Tokenizer.START_TAG_TOKEN]: startTagAfterAfterFrameset,
         [Tokenizer.END_TAG_TOKEN]: ignoreToken,
@@ -587,6 +610,12 @@ class Parser {
 
     _appendCommentNode(token, parent) {
         const commentNode = this.treeAdapter.createCommentNode(token.data);
+
+        this.treeAdapter.appendChild(parent, commentNode);
+    }
+
+    _appendHandlebarsNode(token, parent) {
+        const commentNode = this.treeAdapter.createHandlebarsNode(token.data);
 
         this.treeAdapter.appendChild(parent, commentNode);
     }
@@ -1048,6 +1077,10 @@ function misplacedDoctype(p) {
 
 function appendComment(p, token) {
     p._appendCommentNode(token, p.openElements.currentTmplContent || p.openElements.current);
+}
+
+function appendHandlebars(p, token) {
+    p._appendHandlebarsNode(token, p.openElements.currentTmplContent || p.openElements.current);
 }
 
 function appendCommentToRootHtmlElement(p, token) {
@@ -2339,7 +2372,8 @@ function endTagInTable(p, token) {
         tn !== $.TFOOT &&
         tn !== $.TH &&
         tn !== $.THEAD &&
-        tn !== $.TR
+        tn !== $.TR &&
+        tn !== $.HANDLEBARS_TOKEN
     ) {
         tokenInTable(p, token);
     }

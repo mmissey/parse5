@@ -52,6 +52,8 @@ class Serializer {
                     this._serializeTextNode(currentNode);
                 } else if (this.treeAdapter.isCommentNode(currentNode)) {
                     this._serializeCommentNode(currentNode);
+                } else if (this.treeAdapter.isHandlebarsNode(currentNode)) {
+                    this._serializeHandlebarsNode(currentNode);
                 } else if (this.treeAdapter.isDocumentTypeNode(currentNode)) {
                     this._serializeDocumentTypeNode(currentNode);
                 }
@@ -151,6 +153,16 @@ class Serializer {
 
     _serializeCommentNode(node) {
         this.html += '<!--' + this.treeAdapter.getCommentNodeContent(node) + '-->';
+    }
+
+    _serializeHandlebarsNode(node) {
+        const isUnescaped = this.treeAdapter.getHandlebarsNodeIsEscaped(node);
+        this.html +=
+            '{{' +
+            (isUnescaped ? '{' : '') +
+            this.treeAdapter.getHandlebarsNodeContent(node) +
+            (isUnescaped ? '}' : '') +
+            '}}';
     }
 
     _serializeDocumentTypeNode(node) {

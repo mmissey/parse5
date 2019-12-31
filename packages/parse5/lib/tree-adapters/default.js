@@ -37,6 +37,14 @@ exports.createCommentNode = function(data) {
     };
 };
 
+exports.createHandlebarsNode = function(data) {
+    return {
+        nodeName: '#handlebars',
+        data: data,
+        parentNode: null
+    };
+};
+
 const createTextNode = function(value) {
     return {
         nodeName: '#text',
@@ -178,6 +186,14 @@ exports.getCommentNodeContent = function(commentNode) {
     return commentNode.data;
 };
 
+exports.getHandlebarsNodeIsEscaped = function(handlebarsNode) {
+    return handlebarsNode.data.escaped;
+};
+
+exports.getHandlebarsNodeContent = function(handlebarsNode) {
+    return handlebarsNode.data.content;
+};
+
 exports.getDocumentTypeNodeName = function(doctypeNode) {
     return doctypeNode.name;
 };
@@ -197,6 +213,10 @@ exports.isTextNode = function(node) {
 
 exports.isCommentNode = function(node) {
     return node.nodeName === '#comment';
+};
+
+exports.isHandlebarsNode = function(node) {
+    return node.nodeName === '#handlebars';
 };
 
 exports.isDocumentTypeNode = function(node) {
