@@ -23,7 +23,9 @@ const DEFAULT_OPTIONS = {
     scriptingEnabled: true,
     sourceCodeLocationInfo: false,
     onParseError: null,
-    treeAdapter: defaultTreeAdapter
+    treeAdapter: defaultTreeAdapter,
+    preserveWhitespace: false,
+    specCompliantParents: true
 };
 
 //Misc constants
@@ -287,7 +289,7 @@ const TOKEN_HANDLERS = {
     [AFTER_BODY_MODE]: {
         [Tokenizer.CHARACTER_TOKEN]: tokenAfterBody,
         [Tokenizer.NULL_CHARACTER_TOKEN]: tokenAfterBody,
-        [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: whitespaceCharacterInBody,
+        [Tokenizer.WHITESPACE_CHARACTER_TOKEN]: tokenAfterBody,
         [Tokenizer.COMMENT_TOKEN]: appendCommentToRootHtmlElement,
         [Tokenizer.HANDLEBARS_TOKEN]: appendHandlebars,
         [Tokenizer.DOCTYPE_TOKEN]: ignoreToken,
@@ -845,7 +847,11 @@ class Parser {
     }
 
     _shouldFosterParentOnInsertion() {
-        return this.fosterParentingEnabled && this._isElementCausesFosterParenting(this.openElements.current);
+        return (
+            this.options.specCompliantParents &&
+            this.fosterParentingEnabled &&
+            this._isElementCausesFosterParenting(this.openElements.current)
+        );
     }
 
     _findFosterParentingLocation() {
@@ -1067,8 +1073,11 @@ function callAdoptionAgency(p, token) {
 
 //Generic token handlers
 //------------------------------------------------------------------
-function ignoreToken() {
-    //NOTE: do nothing =)
+function ignoreToken(p, token) {
+    if (p.options.preserveWhitespace && token.type === Tokenizer.WHITESPACE_CHARACTER_TOKEN) {
+        insertCharacters(p, token);
+    }
+    //NOTE: else do nothing =)
 }
 
 function misplacedDoctype(p) {
@@ -2372,8 +2381,7 @@ function endTagInTable(p, token) {
         tn !== $.TFOOT &&
         tn !== $.TH &&
         tn !== $.THEAD &&
-        tn !== $.TR &&
-        tn !== $.HANDLEBARS_TOKEN
+        tn !== $.TR
     ) {
         tokenInTable(p, token);
     }
@@ -2382,7 +2390,7 @@ function endTagInTable(p, token) {
 function tokenInTable(p, token) {
     const savedFosterParentingState = p.fosterParentingEnabled;
 
-    p.fosterParentingEnabled = true;
+    p.fosterParentingEnabled = p.specCompliantParents;
     p._processTokenInBodyMode(token);
     p.fosterParentingEnabled = savedFosterParentingState;
 }
@@ -2390,12 +2398,20 @@ function tokenInTable(p, token) {
 // The "in table text" insertion mode
 //------------------------------------------------------------------
 function whitespaceCharacterInTableText(p, token) {
-    p.pendingCharacterTokens.push(token);
+    if (p.specCompliantParents) {
+        p.pendingCharacterTokens.push(token);
+    } else {
+        insertCharacters(p, token);
+    }
 }
 
 function characterInTableText(p, token) {
-    p.pendingCharacterTokens.push(token);
-    p.hasNonWhitespacePendingCharacterToken = true;
+    if (p.specCompliantParents) {
+        p.pendingCharacterTokens.push(token);
+        p.hasNonWhitespacePendingCharacterToken = true;
+    } else {
+        insertCharacters(p, token);
+    }
 }
 
 function tokenInTableText(p, token) {
@@ -2852,8 +2868,14 @@ function endTagAfterBody(p, token) {
 }
 
 function tokenAfterBody(p, token) {
-    p.insertionMode = IN_BODY_MODE;
-    p._processToken(token);
+    if (token.type === Tokenizer.WHITESPACE_CHARACTER_TOKEN && p.options.preserveWhitespace) {
+        const parent = p.openElements.items.find(node => node.nodeName === 'html');
+        parent && p.treeAdapter.insertText(parent, token.chars);
+        return;
+    } else {
+        p.insertionMode = IN_BODY_MODE;
+        p._processToken(token);
+    }
 }
 
 // The "in frameset" insertion mode
